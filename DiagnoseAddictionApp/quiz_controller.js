@@ -13,8 +13,8 @@ class Quiz{
         return this.questions.length === this.questionIndex;
     }
 
-    guess(answer, question){
+    guess(answer){
+        this.getQuestionIndex().answer = answer;
         this.questionIndex++;
-        question.answer = answer;
     }
 }

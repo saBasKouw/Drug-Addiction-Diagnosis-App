@@ -1,7 +1,7 @@
 let questions = [
-    new Question("Which of the following substances do you most frequently use?", ["Alcohol", "Cocaine", "GHB", "Heroine"], "Alcohol"),
-    new Question("How often do you use this substance?", ["One time a week", "Two times a week", "Three times a week", "three times a week"], "Two times a week"),
-    new Question("How long have you been using this substance", ["Half a year", "One year", "Two years", "More than two years"], "Two years")
+    new Question("Which of the following substances do you most frequently use?", ["Alcohol", "Cocaine", "GHB", "Heroine"]),
+    new Question("How often do you use this substance?", ["One time a week", "Two times a week", "Three times a week", "Everyday"]),
+    new Question("How long have you been using this substance", ["Half a year", "One year", "Two years", "More than two years"])
 ];
 
 let quiz = new Quiz(questions);
@@ -10,7 +10,11 @@ let quiz = new Quiz(questions);
 function populate(){
     if(quiz.isEnded()){
         showEndMessage();
-        console.log(questions);
+
+        for(let question of questions){
+            console.log(question.answer);
+        }
+        
     } else{
     //    show question
         let element = document.getElementById("question");
@@ -20,16 +24,16 @@ function populate(){
         for(let i = 0; i < choices.length; i++){
             let element = document.getElementById("choice"+i);
             element.innerHTML = choices[i];
-            guess("btn"+ i, choices[i], questions[i]);
+            guess("btn"+ i, choices[i]);
         }
         showProgress();
     }
 }
 
-function guess(id, guess, question){
+function guess(id, guess){
     let button = document.getElementById(id);
     button.onclick = ()=> {
-        quiz.guess(guess, question);
+        quiz.guess(guess);
         populate();
 
     }

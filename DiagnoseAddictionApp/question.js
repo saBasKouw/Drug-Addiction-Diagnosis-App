@@ -5,5 +5,9 @@ class Question{
         this.answer = answer;
     }
 
+    isSame(otherAnswer){
+        return this.answer === otherAnswer;
+    }
+
 
 }

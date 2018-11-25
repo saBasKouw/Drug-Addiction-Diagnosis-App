@@ -1,72 +1,85 @@
-let questions = [
-    new Question("Which of the following substances do you most frequently use?", ["Alcohol", "Cocaine", "GHB", "Heroine"]),
-    new Question("How often do you use this substance?", ["One time a week", "Two times a week", "Three times a week", "Everyday"]),
-    new Question("How long have you been using this substance", ["Half a year", "One year", "Two years", "More than two years"])
-];
+
+let questions = [];
+
+
+for(let question of questionData["domain"]["DSM5"]){
+    questions.push(new Question(question['text'], question['choices']));
+}
 
 let quiz = new Quiz(questions);
 
 let resultIsSent = false;
 
 
-function populate(){
-    if(quiz.isEnded() && !resultIsSent){
-
-        showResult();
 
 
-        $("#sendResult").click(()=> {
-            resultIsSent = true;
-            let result = [];
-            for(let i = 0; i < questions.length; i++){
-                for(let j = 0; j < questions[i].choices.length; j++){
-                    let element = document.getElementById(i.toString() +"-"+ j.toString());
-                    if(element.checked){
-                        result.push(questions[i].choices[j]);
-                    }
+
+
+function chooseAnswer() {
+    for (let i = 0; i < quiz.getQuestionWithIndex().choices.length; i++) {
+        let button = document.getElementById('btn'+i);
+        button.onclick = ()=> {
+            quiz.guess(quiz.getQuestionWithIndex().choices[i]);
+            $( ".buttons" ).empty();
+            populate();
+
+        }
+    }
+}
+
+function resultDSM(result){
+    let count = 0;
+    for(let answer of result){
+        if(answer === "yes"){
+            count++;
+        }
+    }
+    if(count < 2){
+        console.log("No indication of alcohol abuse");
+    } else if(count < 4){
+        console.log("Mild indication of alcohol abuse");
+    } else if(count < 6){
+        console.log("Moderate indication of alcohol abuse");
+    }  else if(count >= 6){
+        console.log("Severe indication of alcohol abuse");
+    }
+}
+
+
+
+
+function sendResult(){
+    $("#sendResult").click(()=> {
+        resultIsSent = true;
+        let result = [];
+        for(let i = 0; i < questions.length; i++){
+            for(let j = 0; j < questions[i].choices.length; j++){
+                let element = document.getElementById(i.toString() +"-"+ j.toString());
+                if(element.checked){
+                    result.push(questions[i].choices[j]);
                 }
             }
-            console.log(result);
-            populate();
-        });
-
-        for(let question of questions){
-            console.log(question.answer);
         }
-
-
-    } else if(resultIsSent) {
-        let element = document.getElementById("quiz");
-        let gameOverHtml = "<h1>Result</h1>";
-        gameOverHtml += "<h2>Thank you for participating. The results are sent to the doctor.</h2>"
-        element.innerHTML = gameOverHtml;
-        element = document.getElementById("progress");
-        element.innerHTML = "";
-
-
-    } else{
-    //    show question
-        let element = document.getElementById("question");
-        element.innerHTML = quiz.getQuestionIndex().text;
-        //show choices
-        let choices = quiz.getQuestionIndex().choices;
-        for(let i = 0; i < choices.length; i++){
-            let element = document.getElementById("choice"+i);
-            element.innerHTML = choices[i];
-            guess("btn"+ i, choices[i]);
-        }
-        showProgress();
-    }
-}
-
-function guess(id, guess){
-    let button = document.getElementById(id);
-    button.onclick = ()=> {
-        quiz.guess(guess);
+        resultDSM(result);
         populate();
-
-    }
+    });
 }
+
+function populateQuestion(){
+    let element = document.getElementById("question");
+    element.innerHTML = quiz.getQuestionWithIndex().text;
+    let newHtml = '';
+    for(let i = 0; i < quiz.getQuestionWithIndex().choices.length; i++){
+        newHtml += "<button id='btn"+i+"'><span id='choice"+i+"'>"+quiz.getQuestionWithIndex().choices[i]+"</span></button>"
+    }
+    $('.buttons').append(newHtml);
+
+    chooseAnswer();
+}
+
+
+
+
 
 function showProgress(){
     let currentQuestionNumber = quiz.questionIndex + 1;
@@ -92,7 +105,28 @@ function showResult(){
 
     element = document.getElementById("progress");
     element.innerHTML = "<button id='sendResult'><span>Send result to doctor</span></button>";
-
 }
+
+function messageSent(){
+    let element = document.getElementById("quiz");
+    let gameOverHtml = "<h1>Result</h1>";
+    gameOverHtml += "<h2>Thank you for participating. The results are sent to the doctor.</h2>"
+    element.innerHTML = gameOverHtml;
+    element = document.getElementById("progress");
+    element.innerHTML = "";
+}
+
+function populate(){
+    if(quiz.isEnded() && !resultIsSent){
+        showResult();
+        sendResult();
+    } else if(resultIsSent){
+        messageSent();
+    } else {
+        populateQuestion();
+        showProgress();
+    }
+}
+
 
 populate();

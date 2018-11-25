@@ -5,7 +5,7 @@ class Quiz{
     }
 
 
-    getQuestionIndex(){
+    getQuestionWithIndex(){
         return this.questions[this.questionIndex];
     }
 
@@ -14,7 +14,7 @@ class Quiz{
     }
 
     guess(answer){
-        this.getQuestionIndex().answer = answer;
+        this.getQuestionWithIndex().answer = answer;
         this.questionIndex++;
     }
 }

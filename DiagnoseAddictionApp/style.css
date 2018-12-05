@@ -39,7 +39,7 @@ body{
 
 }
 
-#btn0, #btn1, #btn2, #btn3, #sendResult {
+.btn, #sendResult {
     background-color: #778897;
     width: 250px;
     font-size: 20px;
@@ -62,12 +62,12 @@ body{
     font-size: 18px;
 }
 
-#btn0:hover, #btn1:hover, #btn2:hover, #btn3:hover {
+.btn:hover, #sendResult:hover {
     cursor: pointer;
     background-color: #57636e;
 }
 
 
-#btn0:focus, #btn1:focus, #btn2:focus, #btn3:focus{
+.btn:focus, #sendResult:focus{
     outline: 0;
 }

@@ -3,6 +3,12 @@
 let domainIndex = 0;
 let domains = Object.keys(questionData["domain"]);
 let results = [];
+let neededContext = {"withdrawal": [16], "devoted": [11], "craving": [12], "affect_school": [12, 27],
+    "household": [27,28], "hazardous_circumstances": [13], "own_threat": [23, 14, 13, 17, 7],
+    "other_threat": [22, 24, 25, 13], "care_of_himself": [18, 19, 33], "influence": [34, 35, 21],
+    "lonely": [21, 30, 36, 33, 38], "use_alone": [20, 21, 30], "did_stop": [2, 3],
+    "severity": [2, 4, 11, 12, 13, 14, 15, 16, 27, 28, 29]};
+let answers = [];
 
 function populateAll(){
 
@@ -65,6 +71,7 @@ function populateAll(){
         } results.push(result);
     }
 
+
     function whichResult(result){
         if(domains[domainIndex] === "DSM5"){
             resultDSM(result);
@@ -86,7 +93,11 @@ function populateAll(){
                     }
                 }
             }
-            whichResult(result);
+            for(let question of quiz.questions){
+                answers.push(question.answer)
+            }
+
+            // whichResult(result);
             populate();
         });
     }
@@ -148,6 +159,39 @@ function populateAll(){
     }
 
 
+    function checkIfSo(key){
+        let counter = 0;
+        for(let i of neededContext[key]){
+            if(answers[i-1] === "Ja" || (i === 33 && answers[i-1] !== "Één jaar gewerkt") ||
+                (i === 30 && answers[i-1] === "Alleenwonend") || (i === 3 && answers[i-1] === "Mijn gebruik is afgenomen") ||
+                (i === 3 && answers[i-1] === "Mijn gebruik was gestopt")){
+                counter++;
+            }
+        }
+        return {[key]: counter+'/'+neededContext[key].length};
+    }
+
+
+    function generateOverview(){
+        let element = document.getElementById("quiz");
+        let gameOverHtml = "<h1>Overview</h1>";
+
+        gameOverHtml += "<p></p>"
+
+
+        element.innerHTML = gameOverHtml;
+    }
+
+    function generateResult(){
+        let result;
+        for(let key in neededContext){
+            result = checkIfSo(key);
+            results.push(result);
+        }
+        generateOverview();
+    }
+
+
 
     function populate(){
         if(quiz.isEnded() && !resultIsSent){
@@ -156,6 +200,7 @@ function populateAll(){
         } else if(resultIsSent) {
             if (domainIndex === domains.length-1) {
                 messageSent();
+                generateResult();
             } else {
                 domainIndex++
                 populateAll();
@@ -170,4 +215,9 @@ function populateAll(){
 }
 
 
+
+
+
 populateAll();
+console.log(results);
+// generateResult();

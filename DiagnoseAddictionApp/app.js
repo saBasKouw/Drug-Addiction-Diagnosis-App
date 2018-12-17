@@ -2,7 +2,7 @@
 
 let domainIndex = 0;
 let domains = Object.keys(questionData["domain"]);
-let results = [];
+let results = {};
 let neededContext = {"withdrawal": [16], "devoted": [11], "craving": [12], "affect_school": [12, 27],
     "household": [27,28], "hazardous_circumstances": [13], "own_threat": [23, 14, 13, 17, 7],
     "other_threat": [22, 24, 25, 13], "care_of_himself": [18, 19, 33], "influence": [34, 35, 21],
@@ -33,6 +33,7 @@ function populateAll(){
 
 
     function populateQuiz(){
+        //Populates a quiz object with questions from each domain starting with the first domain in questionData
         for(let question of questionData["domain"][domains[domainIndex]]){
             questions.push(new Question(question['text'], question['choices']));
         }
@@ -41,6 +42,8 @@ function populateAll(){
 
 
     function chooseAnswer() {
+        //When a button is clicked an answer is given to a question, accordingly this answered is stored in
+        // the question class. after a button is clicked the html is removed to make place for a new html.
         for (let i = 0; i < quiz.getQuestionWithIndex().choices.length; i++) {
             let button = document.getElementById('btn'+i);
             button.onclick = ()=> {
@@ -52,14 +55,10 @@ function populateAll(){
         }
     }
 
-    function resultDSM(result){
-        let count = 0;
-        for(let answer of result){
-            if(answer === "yes"){
-                count++;
-            }
-        }
-        result = [];
+    function resultDSM(score){
+        //The DSM score is calculated by using this function.
+        let count = parseInt(score[0]);
+        let result;
         if(count < 2){
             result = "No indication of alcohol abuse";
         } else if(count < 4){
@@ -68,21 +67,14 @@ function populateAll(){
             result = "Moderate indication of alcohol abuse";
         }  else if(count >= 6){
             result = "Severe indication of alcohol abuse";
-        } results.push(result);
+        } return result;
     }
 
 
-    function whichResult(result){
-        if(domains[domainIndex] === "DSM5"){
-            resultDSM(result);
-        } else if(domains[domainIndex] === "background") {
-            console.log("background result");
-        }
-    }
-
-
-    function sendResult(){
-        $("#sendResult").click(()=> {
+    function nextPage(){
+        //If the nextPage button is clicked the answers of the domain quiz that the patient just finished are stored to
+        // the result and the answers are
+        $("#nextPage").click(()=> {
             resultIsSent = true;
             let result = [];
             for(let i = 0; i < questions.length; i++){
@@ -96,8 +88,6 @@ function populateAll(){
             for(let question of quiz.questions){
                 answers.push(question.answer)
             }
-
-            // whichResult(result);
             populate();
         });
     }
@@ -142,9 +132,9 @@ function populateAll(){
 
         element = document.getElementById("progress");
         if(domainIndex === domains.length-1){
-            element.innerHTML = "<button id='sendResult'><span>Sent result to doctor</span></button>";
+            element.innerHTML = "<button id='nextPage'><span>Sent result to doctor</span></button>";
         } else {
-            element.innerHTML = "<button id='sendResult'><span>Next</span></button>";
+            element.innerHTML = "<button id='nextPage'><span>Next</span></button>";
         }
 
     }
@@ -168,38 +158,49 @@ function populateAll(){
                 counter++;
             }
         }
-        return {[key]: counter+'/'+neededContext[key].length};
+        results[key] = counter+'/'+neededContext[key].length;
     }
 
 
     function generateOverview(){
         let element = document.getElementById("quiz");
         let gameOverHtml = "<h1>Overview</h1>";
-
-        gameOverHtml += "<p></p>"
-
-
+        gameOverHtml += "<p>The patient is addicted to: "+ answers[0] +"</p>"+
+            "<p>The patient is in withdrawal: "+ results["withdrawal"] +"</p>"+
+            "<p>The patient devotes substantial time to facilitate their use: "+ results["devoted"] +"</p>"+
+            "<p>The patient has a strong desire to use which makes it difficult to think of anything else: "+ results["craving"] +"</p>"+
+            "<p>The patient's use affects his school or work: "+ results["affect_school"] +"</p>"+
+            "<p>The patient might neglect their household responsibilities or child care: "+ results["household"] +"</p>"+
+            "<p>The patient uses in potential hazardous circumstances: "+ results["hazardous_circumstances"] +"</p>"+
+            "<p>The patient is a threat to themselves: "+ results["own_threat"] +"</p>"+
+            "<p>The patient is a threat to others: "+ results["other_threat"] +"</p>"+
+            "<p>The patient does not take care of themselves: "+ results["care_of_himself"] +"</p>"+
+            "<p>The patient is influenced by others to use: "+ results["influence"] +"</p>"+
+            "<p>The patient is lonely and this has affect on their use: "+ results["lonely"] +"</p>"+
+            "<p>The patient has on occasion tried to stop using: "+ results["did_stop"] +"</p>"+
+            "<p>The severity of the patient's use is: "+ resultDSM(results["severity"]) +"</p>";
         element.innerHTML = gameOverHtml;
+        element = document.getElementById("progress");
+        element.innerHTML = "";
     }
+
 
     function generateResult(){
         let result;
         for(let key in neededContext){
             result = checkIfSo(key);
-            results.push(result);
         }
         generateOverview();
     }
 
 
-
     function populate(){
         if(quiz.isEnded() && !resultIsSent){
             showResult();
-            sendResult();
+            nextPage();
         } else if(resultIsSent) {
             if (domainIndex === domains.length-1) {
-                messageSent();
+                // messageSent();
                 generateResult();
             } else {
                 domainIndex++
@@ -215,9 +216,5 @@ function populateAll(){
 }
 
 
-
-
-
 populateAll();
 console.log(results);
-// generateResult();

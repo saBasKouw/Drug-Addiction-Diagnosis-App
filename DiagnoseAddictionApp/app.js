@@ -55,20 +55,7 @@ function populateAll(){
         }
     }
 
-    function resultDSM(score){
-        //The DSM score is calculated by using this function.
-        let count = parseInt(score[0]);
-        let result;
-        if(count < 2){
-            result = "No indication of alcohol abuse";
-        } else if(count < 4){
-            result = "Mild indication of alcohol abuse";
-        } else if(count < 6){
-            result = "Moderate indication of alcohol abuse";
-        }  else if(count >= 6){
-            result = "Severe indication of alcohol abuse";
-        } return result;
-    }
+
 
 
     function nextPage(){
@@ -85,8 +72,8 @@ function populateAll(){
                     }
                 }
             }
-            for(let question of quiz.questions){
-                answers.push(question.answer)
+            for(let question of result){
+                answers.push(question)
             }
             populate();
         });
@@ -152,9 +139,13 @@ function populateAll(){
     function checkIfSo(key){
         let counter = 0;
         for(let i of neededContext[key]){
-            if(answers[i-1] === "Ja" || (i === 33 && answers[i-1] !== "Één jaar gewerkt") ||
-                (i === 30 && answers[i-1] === "Alleenwonend") || (i === 3 && answers[i-1] === "Mijn gebruik is afgenomen") ||
+            if(answers[i-1] === "Ja" ||
+                (i === 33 && answers[i-1] === "Één jaar gewerkt") ||
+                (i === 33 && answers[i-1] === "Niet gewerkt") ||
+                (i === 30 && answers[i-1] === "Alleenwonend") ||
+                (i === 3 && answers[i-1] === "Mijn gebruik is afgenomen") ||
                 (i === 3 && answers[i-1] === "Mijn gebruik was gestopt")){
+
                 counter++;
             }
         }
@@ -162,23 +153,74 @@ function populateAll(){
     }
 
 
+    function resultDSM(score){
+        //The DSM score is calculated by using this function.
+        let count = parseInt(score[0]);
+        let result;
+        if(count < 2){
+            result = "<span class='bold'>No indication of "+ answers[0].toLowerCase() +" abuse</span>";
+        } else if(count < 4){
+            result = "<span class='bold'>Mild indication of "+ answers[0].toLowerCase() +" abuse</span>";
+        } else if(count < 6){
+            result = "<span class='bold'>Moderate indication of "+ answers[0].toLowerCase() +" abuse</span>";
+        }  else if(count >= 6){
+            result = "<span class='bold'>Severe indication of "+ answers[0].toLowerCase() +" abuse</span>";
+        } return result;
+    }
+
+
+    function assignLevel(score){
+        let count = parseInt(score[0]);
+        if(count === 0){
+            return "<span class='bold'>No indication</span>";
+        } else if(count < 2){
+            return "<span class='bold'>Mild indication</span>";
+        } else if(count < 3){
+            return "<span class='bold'>Moderate indication</span>";
+        } else{
+            return "<span class='bold'>Severe indication</span>";
+        }
+    }
+
+    function assignBool(score){
+        let count = parseInt(score[0]);
+        if(count > 0){
+            return "<span class='greenText'>&#x2714;</span>";
+        } else{
+            return "<span class='redText'>&#x274C;</span>";
+        }
+    }
+
+    function whichResult(key){
+        let score = results[key];
+        let total = parseInt(score[2]);
+        if(key === "severity"){
+            return resultDSM(results[key]);
+        } else if(total > 2){
+            return assignLevel(score, key);
+        } else {
+            return assignBool(score);
+        }
+    }
+
+
     function generateOverview(){
         let element = document.getElementById("quiz");
         let gameOverHtml = "<h1>Overview</h1>";
-        gameOverHtml += "<p>The patient is addicted to: "+ answers[0] +"</p>"+
-            "<p>The patient is in withdrawal: "+ results["withdrawal"] +"</p>"+
-            "<p>The patient devotes substantial time to facilitate their use: "+ results["devoted"] +"</p>"+
-            "<p>The patient has a strong desire to use which makes it difficult to think of anything else: "+ results["craving"] +"</p>"+
-            "<p>The patient's use affects his school or work: "+ results["affect_school"] +"</p>"+
-            "<p>The patient might neglect their household responsibilities or child care: "+ results["household"] +"</p>"+
-            "<p>The patient uses in potential hazardous circumstances: "+ results["hazardous_circumstances"] +"</p>"+
-            "<p>The patient is a threat to themselves: "+ results["own_threat"] +"</p>"+
-            "<p>The patient is a threat to others: "+ results["other_threat"] +"</p>"+
-            "<p>The patient does not take care of themselves: "+ results["care_of_himself"] +"</p>"+
-            "<p>The patient is influenced by others to use: "+ results["influence"] +"</p>"+
-            "<p>The patient is lonely and this has affect on their use: "+ results["lonely"] +"</p>"+
-            "<p>The patient has on occasion tried to stop using: "+ results["did_stop"] +"</p>"+
-            "<p>The severity of the patient's use is: "+ resultDSM(results["severity"]) +"</p>";
+        gameOverHtml += "<p>The patient is addicted to: "+ "<span class='bold'>"+answers[0]+"</span></p>"+
+            "<p>The patient is in withdrawal: "+ whichResult("withdrawal") +"</p>"+
+            "<p>The patient devotes substantial time to facilitate their use: "+ whichResult("devoted") +"</p>"+
+            "<p>The patient has a strong desire to use which makes it difficult to think of anything else: "+ whichResult("craving") +"</p>"+
+            "<p>The patient's use affects his school or work: "+ whichResult("affect_school") +"</p>"+
+            "<p>The patient might neglect their household responsibilities or child care: "+ whichResult("household") +"</p>"+
+            "<p>The patient uses in potential hazardous circumstances: "+ whichResult("hazardous_circumstances") +"</p>"+
+            "<p>The patient is a threat to themselves: "+ whichResult("own_threat") +"</p>"+
+            "<p>The patient is a threat to others: "+ whichResult("other_threat") +"</p>"+
+            "<p>The patient does not take care of themselves: "+ whichResult("care_of_himself") +"</p>"+
+            "<p>The patient is influenced by others to use: "+ whichResult("influence") +"</p>"+
+            "<p>The patient is lonely and this has affect on their use: "+ whichResult("lonely") +"</p>"+
+            "<p>The patient has on occasion tried to stop using: "+ whichResult("did_stop") +"</p>"+
+            "<p>The severity of the patient's use is: "+ whichResult("severity") +"</p>";
         element.innerHTML = gameOverHtml;
         element = document.getElementById("progress");
         element.innerHTML = "";

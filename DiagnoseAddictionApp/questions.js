@@ -33,7 +33,7 @@ let questionData = {"domain":
                 },
 
             ],
-            "Perspective of patient": [{
+            "Perspective": [{
                 "text": "Kijkt u positief tegen een behandeling aan?",
                 "choices": ["ja", "nee"]
             },
@@ -46,7 +46,7 @@ let questionData = {"domain":
                     "choices": ["Elke dag", "Meermalen per week", "Elke week", "Elke maand", "Overig"]
                 },
             ],
-            "Psychological/physical health": [{
+            "Health": [{
                 "text": "Spendeert u veel tijd met het verkrijgen en gebruiken of u ziek voelen door de nawerkingen?",
                 "choices": ["Ja", "Nee"]
             },
@@ -87,7 +87,7 @@ let questionData = {"domain":
                     "choices": ["Ja", "Nee"]
                 },
                 {
-                    "text": "Gebruikt u regelmatig in uw eentje of alleen in gezelschap?",
+                    "text": "Gebruikt u vaak alleen?",
                     "choices": ["Ja", "Nee"]
                 },
                 {
@@ -148,15 +148,15 @@ let questionData = {"domain":
                     "choices": ["Ja", "Nee"]
                 },
                 {
-                    "text": "Bent u lid van een sport/hobby vereniging?",
+                    "text": "Bent u geen lid van een sport/hobby vereniging?",
                     "choices": ["Ja", "Nee"]
                 },
                 {
-                    "text": "vind u het makkelijk om nee te zeggen als u iets wordt aangeboden.",
+                    "text": "vind u het moeilijk om nee te zeggen als u iets wordt aangeboden.",
                     "choices": ["Ja", "Nee"]
                 },
                 {
-                    "text": "Ik zie mijzelf als iemand die veel vrienden heeft.",
+                    "text": "Ik zie mijzelf als iemand die weinig vrienden heeft.",
                     "choices": ["Ja", "Nee"]
                 },
             ],

@@ -39,7 +39,7 @@ body{
 
 }
 
-.btn, #sendResult {
+.btn, #nextPage {
     background-color: #778897;
     width: 250px;
     font-size: 20px;
@@ -62,12 +62,24 @@ body{
     font-size: 18px;
 }
 
-.btn:hover, #sendResult:hover {
+.btn:hover, #nextPage:hover {
     cursor: pointer;
     background-color: #57636e;
 }
 
 
-.btn:focus, #sendResult:focus{
+.btn:focus, #nextPage:focus{
     outline: 0;
+}
+
+.redText{
+    color: red;
+}
+
+.greenText{
+    color: green;
+}
+
+.bold {
+    font-weight:bold;
 }

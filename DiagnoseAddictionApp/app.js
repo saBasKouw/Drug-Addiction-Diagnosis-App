@@ -104,17 +104,19 @@ function populateAll(){
     }
 
     function showResult(){
-        //after all the questions are answered of a domain the user get the chance to
-        // revise the answers given. This function populates the app with the necessary html
+        //after all the questions of a domain are answered the user get the chance to
+        // revise the answers given. This function populates the app with the necessary html like radio buttons
         let reviseHtml = "<h1>Revise</h1>";
         for(let i = 0; i < questions.length; i++){
             reviseHtml += "<p>"+ questions[i].text +"</p>";
             for(let j = 0; j < questions[i].choices.length; j++){
                 let id = i.toString() +"-"+ j.toString();
                 if(questions[i].isSame(questions[i].choices[j])){
-                    reviseHtml += "<div> <input type='radio' name=question"+i+" id="+ id +" value=" + id + " checked> <label for="+id+">"+questions[i].choices[j]+"</label> </div>"
+                    reviseHtml += "<div><input type='radio' name=question"+i+" id="+ id +" value=" + id +
+                        " checked><label for="+id+">"+questions[i].choices[j]+"</label></div>"
                 } else {
-                    reviseHtml += "<div> <input type='radio' name=question"+i+" id="+ id+" value=" + id + "> <label for="+id+">"+questions[i].choices[j]+"</label> </div>"
+                    reviseHtml += "<div><input type='radio' name=question"+i+" id="+ id+" value=" + id +
+                        "><label for="+id+">"+questions[i].choices[j]+"</label></div>"
                 }
             }
         }
@@ -122,8 +124,8 @@ function populateAll(){
         element.innerHTML = reviseHtml;
         element = document.getElementById("progress");
 
-        //if all the questions of each domain are answered the user gets the chose to
-        //sent the result to the doctor, if this is not te case a new domain with new answers
+        //if all the questions of each domain are answered the user gets the choice to
+        //sent the result to the doctor, if this is not the case a new domain with new answers
         //will be provided to the user
         if(domainIndex === domains.length-1){
             element.innerHTML = "<button id='nextPage'><span>Sent result to doctor</span></button>";
@@ -136,7 +138,7 @@ function populateAll(){
     function messageSent(){
         let element = document.getElementById("quiz");
         let gameOverHtml = "<h1>Result</h1>";
-        gameOverHtml += "<h2>Thank you for participating. The results are sent to the doctor.</h2>"
+        gameOverHtml += "<h2>Thank you for participating. The results are sent to the doctor.</h2>";
         element.innerHTML = gameOverHtml;
         element = document.getElementById("progress");
         element.innerHTML = "";
@@ -148,31 +150,31 @@ function populateAll(){
         //is an answer which will trigger the score to go up.
         let counter = 0;
         for(let questionNumber of neededContext[key]){
-            //The neededContext[key] can be considered to be the abstraction_method
-            // The questions from the neededContext are called and extracted from the answers aka case
+            //The neededContext[key] can be considered to be the 'abstraction_method'
+            // The questions from the neededContext are called and extracted from the answers aka 'case'
             // Together the linked questions to each neededContext can be considered to be the
-            // abstracted case in the inference structure.
-            if(answers[questionNumber-1] === "Ja" ||
+            // 'abstracted case' in the inference structure.
+            if(answers[questionNumber-1] === "Ja"  && (questionNumber !== 21)||
+                (questionNumber === 21 && answers[questionNumber-1] === 'nee') ||
                 (questionNumber === 33 && answers[questionNumber-1] === "Één jaar gewerkt") ||
                 (questionNumber === 33 && answers[questionNumber-1] === "Niet gewerkt") ||
                 (questionNumber === 30 && answers[questionNumber-1] === "Alleenwonend") ||
                 (questionNumber === 3 && answers[questionNumber-1] === "Mijn gebruik is afgenomen") ||
-                (questionNumber === 3 && answers[questionNumber-1] === "Mijn gebruik was gestopt")){
+                (questionNumber === 3 && answers[questionNumber-1] === "Mijn gebruik was gestopt")) {
 
                 counter++;
             }
         }
-
         results[key] = counter+'/'+neededContext[key].length;
     }
 
 
     function resultDSM(score){
-        //The DSM score is determined by using this function. THis function represents the
-        // evaluates inference
+        //The DSM score is determined by using this function. This function represents the
+        // 'evaluates inference'
         let count = parseInt(score[0]);
         let result;
-        //The code block below represents the decision_method
+        //The code block below represents the 'decision_method'
         if(count < 2){
             result = "<span class='bold'>No indication of "+ answers[0].toLowerCase() +" abuse</span>";
         } else if(count < 4){
@@ -187,9 +189,9 @@ function populateAll(){
 
     function assignLevel(score){
         //For scores other than DSM this function will decide if the score is mild, moderate or severe
-        // THis function represents the evaluates inference
+        // This function represents the 'evaluates inference'
         let count = parseInt(score[0]);
-        //The code block below represents the decision_method
+        //The code block below represents the 'decision_method'
         if(count === 0){
             return "<span class='bold'>No indication</span>";
         } else if(count < 2){
@@ -205,11 +207,11 @@ function populateAll(){
         //if a domain has less than 3 questions a boolean decision will be given which represents
         // if there is an indication or not. This function will either assign a green check mark
         // or a red cross.
-        // THis function represents the evaluates inference
+        // This function represents the 'evaluates' inference
         let count = parseInt(score[0]);
-        //the if statement is the match, the count is the norm value and the return statement consist of
-        // the decision.
-        //The code block below represents the decision_method
+        //the if statement is the 'match', the count is the 'norm value' and the return statement consist of
+        // the 'decision'.
+        //The code block below represents the 'decision_method'
         if(count > 0){
             return "<span class='greenText'>&#x2714;</span>";
         } else{
@@ -218,12 +220,12 @@ function populateAll(){
     }
 
     function whichResult(key){
-        //this specifies the norm method. It will be either DSM, an indication in levels,
+        //this specifies the 'norm' method. It will be either DSM, an indication in levels,
         // or if there is less than 3 questions a boolean indication.
-        // The code block below represents the norms block in the inference structure
+        // The code block below represents the 'norms' block in the inference structure
         let score = results[key];
         let total = parseInt(score[2]);
-        //Each of the following statement can trigger one norm of the norms.
+        //Each of the following statement can trigger one 'norm' of the 'norms'.
         if(key === "severity"){
             return resultDSM(results[key]);
         } else if(total > 2){
@@ -239,7 +241,7 @@ function populateAll(){
         //from the questionnaire. In order to generate the results the abstraction is made
         // //by using the whichResult function.
 
-        // Every concatenation of the html string below represents the append to inference in the
+        // Every concatenation of the html string below represents the 'append to' inference in the
         // inference structure
         let element = document.getElementById("quiz");
         let overviewHtml = "<h1>Overview</h1>";
@@ -265,7 +267,7 @@ function populateAll(){
 
     function generateResult(){
         //This function will call every important context key so that the result can be
-        //generated using the evaluate function. and after that it call the generateOverview function.
+        //generated using the evaluate function. and after that, it calls the generateOverview function.
         let result;
         for(let key in neededContext){
             result = abstraction(key);

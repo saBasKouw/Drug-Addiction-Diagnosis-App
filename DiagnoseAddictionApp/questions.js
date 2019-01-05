@@ -35,7 +35,7 @@ let questionData = {"domain":
             ],
             "Perspective": [{
                 "text": "Kijkt u positief tegen een behandeling aan?",
-                "choices": ["ja", "nee"]
+                "choices": ["Ja", "Nee"]
             },
                 {
                     "text": "Hoe zie jij jezelf na behandelt te zijn voor jouw verslaving?",
@@ -75,11 +75,11 @@ let questionData = {"domain":
                     "choices": ["Ja", "Nee"]
                 },
                 {
-                    "text": "Ik heb een vaste structuur door de week heen.",
+                    "text": "Ik heb  geen vaste structuur door de week heen.",
                     "choices": ["Ja", "Nee"]
                 },
                 {
-                    "text": "Ik zou mijn eetgewoontes beschrijven als regelmatig.",
+                    "text": "Ik zou mijn eetgewoontes niet beschrijven als regelmatig.",
                     "choices": ["Ja", "Nee"]
                 },
                 {
